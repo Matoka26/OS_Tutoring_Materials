@@ -71,7 +71,7 @@ Când un proces își finalizează execuția, acesta cheamă sistemul de operare
 
 ![Fork program](assets/fork-cod.jpg)
 
-```
+```c
 #include <unistd.h>
 #include <sys/wait.h>
 #include <stdio.h>
@@ -108,7 +108,7 @@ Exemplu de program in care copilul executa comanda `ls`
 1. Scrieti codul pentru urmatoarea arborescenta de procese:
 ![](assets/arborescenta-procese-1.jpg)
 Pe foaia de examen trebuie sa scrieti ceva de genul (nu neaparat in modul asta):
-```
+```c
 if(fork()) {
     // am intrat in procesul parinte (P1 si am creat mai sus P2)
     if(!fork()) {
@@ -130,7 +130,7 @@ if(fork()) {
 ```
 
 2. Desenati arborescenta pentru urmatorul cod:
-```
+```c
 for (int i = 0; i < 3; ++i) {
     for (int j = i; j >= 0; --j) {
         fork();
