@@ -82,32 +82,17 @@ Procele sunt puse pe CPU in ordinea in care au venit cand este liber
 
 | Process      | Burst Time    | Arrival |
 | ------------ | ------------- | ------- |
-| P1 | 24 | 0 |
-| P2 | 3 | 1 |
-| P3 | 3 | 2 |
+| $${\color{blue}P1}$$ | 24 | 0
+| $${\color{green}P2}$$ | 3 | 1
+| $${\color{purple}P4}$$ | 3 | 2
 
-<div style="color:black; display: flex; align-items: center; background-color: lightgray; padding: 15px;">
-    <div style="flex-grow: 24; position: relative; padding: 20px; border: 1px solid black;">
-        P1
-        <span style="position: absolute; left: 0; bottom: -20px; color: black;">0</span>
-    </div>
-    <div style="flex-grow: 3; position: relative; padding: 20px; border: 1px solid black;">
-        P2
-        <span style="position: absolute; left: 0; bottom: -20px; color: black;">24</span>
-    </div>
-    <div style="flex-grow: 3; position: relative; padding: 20px; border: 1px solid black;">
-        P3
-        <span style="position: absolute; left: 0; bottom: -20px; color: black;">27</span>
-        <span style="position: absolute; right: 0; bottom: -20px; color: black;">30</span>
-    </div>
-</div>
-
+![fcfs1](images/fcfs1.png)
 
 | Process      | Wainting Time |
 | ------------ | ------------- |
-| P1 | 0 |
-| P2 | Burst Time(P1) = 24 |
-| P3 | Burst Time(P1) + Burst Time(P2) = 24 + 3 = 27 |
+| $${\color{blue}P1}$$ | 0 |
+| $${\color{green}P2}$$ | Burst Time(P1) = 24 |
+| $${\color{purple}P3}$$ | Burst Time(P1) + Burst Time(P2) = 24 + 3 = 27 |
 
 Averate Waiting Time = avg(0 + 24 + 27) = 17
 
@@ -117,31 +102,17 @@ Averate Waiting Time = avg(0 + 24 + 27) = 17
 
 | Process      | Burst Time    | Arrival |
 | ------------ | ------------- | ------- |
-| P1 | 24 | 2 |
-| P2 | 3 | 0 |
-| P3 | 3 | 1 |
+| $${\color{blue}P1}$$ | 24 | 2
+| $${\color{green}P2}$$ | 3 | 0
+| $${\color{purple}P4}$$ | 3 | 1
 
-<div style="color:black; display: flex; align-items: center; background-color: lightgray; padding: 15px;">
-    <div style="flex-grow: 3; position: relative; padding: 20px; border: 1px solid black;">
-        P2
-        <span style="position: absolute; left: 0; bottom: -20px; color: black;">0</span>
-    </div>
-    <div style="flex-grow: 3; position: relative; padding: 20px; border: 1px solid black;">
-        P3
-        <span style="position: absolute; left: 0; bottom: -20px; color: black;">3</span>
-    </div>
-    <div style="flex-grow: 24; position: relative; padding: 20px; border: 1px solid black;">
-        P1
-        <span style="position: absolute; left: 0; bottom: -20px; color: black;">6</span>
-        <span style="position: absolute; right: 0; bottom: -20px; color: black;">30</span>
-    </div>
-</div>
+![fcfs2](images/fcfs2.png)
 
 | Process      | Wainting Time |
 | ------------ | ------------- |
-| P1 | Burst Time(P2) + Burst Time(P3) = 3 + 3 = 6 |
-| P2 | 0 |
-| P3 | Burst Time(P2) = 3 |
+| $${\color{blue}P1}$$ | Burst Time(P2) + Burst Time(P3) = 3 + 3 = 6 |
+| $${\color{green}P2}$$ | 0 |
+| $${\color{purple}P3}$$ | Burst Time(P2) = 3 |
 
 Averate Waiting Time = avg(0 + 3 + 6) = 3
 
@@ -154,44 +125,27 @@ Averate Waiting Time = avg(0 + 3 + 6) = 3
 
 | Process      | Burst Time    |
 | ------------ | ------------- |
-| P1 | 6 |
-| P2 | 8 |
-| P3 | 7 |
-| P4 | 3 |
+| $${\color{blue}P1}$$ | 6 |
+| $${\color{green}P2}$$ | 8 |
+| $${\color{purple}P4}$$ | 7 |
+| $${\color{red}P4}$$ | 3 |
 
-Rezulta ordinea: P4, P1, P3, P2
+Rezulta ordinea:  
 
-<div style="color:black; display: flex; align-items: center; background-color: lightgray; padding: 15px;">
-    <div style="flex-grow: 3; position: relative; padding: 20px; border: 1px solid black;">
-        P4
-        <span style="position: absolute; left: 0; bottom: -20px; color: black;">0</span>
-    </div>
-    <div style="flex-grow: 6; position: relative; padding: 20px; border: 1px solid black;">
-        P1
-        <span style="position: absolute; left: 0; bottom: -20px; color: black;">3</span>
-    </div>
-        <div style="flex-grow: 7; position: relative; padding: 20px; border: 1px solid black;">
-        P3
-        <span style="position: absolute; left: 0; bottom: -20px; color: black;">9</span>
-    </div>
-    <div style="flex-grow: 8; position: relative; padding: 20px; border: 1px solid black;">
-        P2
-        <span style="position: absolute; left: 0; bottom: -20px; color: black;">16</span>
-        <span style="position: absolute; right: 0; bottom: -20px; color: black;">24</span>
-    </div> 
-</div>
+$${\color{red}P4 \color{blue}P1 \color{purple}P4 \color{green}P2}$$
 
+![sjf](images/sjf.png)
 | Process      | Wainting Time |
 | ------------ | ------------- |
-| P1 | Waiting Time(P4) + Burst Time(P4) = 0 + 3 = 3  |
-| P2 | Waiting Time(P3) + Burst Time(P3) = 9 + 7 = 16|
-| P3 | Waiting Time(P1) + Burst Time(P1) = 3 + 6 = 9 |
-| P4 | 0 |
+| $${\color{blue}P1}$$ | Waiting Time(P4) + Burst Time(P4) = 0 + 3 = 3  |
+| $${\color{green}P2}$$ | Waiting Time(P3) + Burst Time(P3) = 9 + 7 = 16|
+| $${\color{purple}P3}$$ | Waiting Time(P1) + Burst Time(P1) = 3 + 6 = 9 |
+| $${\color{red}P4}$$ | 0 |
 
 Averate Waiting Time = avg(3 + 16 + 9 + 0) = 28 / 4 = 7
 
 > [!IMPORTANT] 
-> Q: Ok dar cum stim cat va dura un proces?
+> Q: Ok dar cum stim cat va dura un proces?  
 > A: Putem doar estima, putem vedea in viitor
 
 ## Referinte
