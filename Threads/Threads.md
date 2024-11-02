@@ -18,6 +18,8 @@ Cea mai mica secventa de instructiuni dintr-un proces, care poate fi considerata
 ## 3.Down Sides
 - Sintaxa e mai greoaie
 
+- Daca un thread produce o eroare, tot procesul moare
+
 - Thread-urile se pot afla in momente diferite ale executiei, iar <b>sincronizarea</b> lor devine mult mai dificila. Si faptul ca impart resurse devine o problema de sincronizare :)
 
 - Nu exista o limita de cate thread-uri poti crea, insa daca depasesti cu mult numarur de <b>core-uri din CPU</b> nu vei mai aduce nicio performanta suplimentara.<br>
