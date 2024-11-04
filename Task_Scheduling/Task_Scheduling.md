@@ -16,7 +16,7 @@ Le putem avea pe toate?
     - Perioada in care un proces asteapta ca datele sa fie <b><i>citite</b></i> sau <b><i>scrise</b></i> din memorie, retea, etc.
     - Caracterizate de <b><i>waiting time</b></i> (cat dureaza sa fie executata operatia, depinde de viteza hardware-ului, mediul prin care trec datele, tipul operatiei) si <b><i>type</b></i>
 
-> [~NOTE]
+> [!NOTE]
 > I/O nu se refera neaparat la citit/scris de la tastatura, se refera de exemplu la citirea din memorie intr-un registru(fetch)
 > [Fetch-Decode-Execute Cycle](https://www.geeksforgeeks.org/different-instruction-cycles/).
 
@@ -317,8 +317,66 @@ $$
 Observam ca (1-alpha) ste subunitar, iar la fiecare pas e ridicat la un exponent mai mare, scazand impactul predictiilor trecute pentru suma.
 
 
+## 8. Multilevel Queues (MQL)
+- <b><i>Ready queue</b></i> poate fi impartita in mai multe categorii(nivele) de procese si fiecare poate avea o prioritate diferita
+- Avantaje: 
+    - Putem aplica cate un algoritm diferit pe fiecare coada
+    - Poate fi mai putin costisitoare (mai putin overhead)
+- Dezavantaje: 
+    - Avem risc de <b><i>starvation</b></i> pe cozile cu prioritati mici
+- Exemple:  
+    - <b><i>foreground</b></i> (interactive) cu <b>RR</b>, 80% din timp pe CPU si <b><i>background</b></i> (batch) cu <b>FCFS</b>, 20% din timp pe CPU
+    - 1. <b><i>System process</b></i> : procesele create de OS
+      2. <b><i>Interactive processes</b></i> : procese ale userului ce necesita interactiuni frecvente (ex: web browser)
+      3. <b><i>Interactive editing processes</b></i> : procesele aplicatiilor de editare (ex: photoshop, VS Code)
+      4. <b><i>Batch processes</b></i> : procese in background ce folosesc multe date sau ruleaza repetitiv
+      5. <b><i>Student processes</b></i> : procese create de studenti pentru a invata si experimenta
+- Procesele pot fi mutate dintr-o coada in alta, asa putem implementa si <b><i>aging-ul</b></i>  
+
+![mlq](images/mlq.png)
+
+## 9. Thread Scheduling
+Aici scheduling-ul exista in doua forme:
+
+### 1. Process Contention Scope (PCS)
+- Se aplica thread-urilor create de <b>user</b> in <b>scope-ul unui proces</b> 
+- Prioritatile thread-urilor pot fi alese de programator
+### 2. System Contention Scope (SCS)
+- Se aplica thread-urilor <b>kernel</b>
 
 
+## 10. Multi Processor Scheduling
+Poate ati observat pana acum ca nu am vorbit niciun moment despre <b><i>core-uri</b></i>, doar am spus ca "punem un tasl pe CPU".  
+Problema devine mult mai complexa cand consideram diverse design-uri de multiprocesoare si memorii.
+
+#### Process affinity: 
+- caracteristica unui proces de a rula pe un CPU anume 
+- puteti vedea afinitatea unui proces cu comanda [taskset](https://www.man7.org/linux/man-pages/man1/taskset.1.html)
+```sh
+taskset [options] -p [mask] pid
+```
+#### 1. Homogeneous processors:
+- toate procesoarele din ansamblu au <b>acelasi</b> design
+- sunt mai usor de conceput 
+- adaugarea a tot mai multe nu garanteaza un boost (Legea lui Amdahl)
+- scrirea codului pentru ele e mai usoara, cam orice proces poate merge pe oricare procesor
+- fiecare procesor poate avea cate o queue privat de job-uri sau poate exista unul comun
+
+#### 2. Asymmetric multiprocessing:
+- nu toate procesoarele au acelasi design  
+- procesoarele specializate vor oferi o performanta mai buna pentru job-urile lor
+- este <b>mai putin resource efficent</b>   
+- intr-o arhitectura <b><i>Master-Slaves</b></i> daca master-ul nu munceste, nici slaves nu vor face nimic
+
+Exemple:
+- un procesor CPU poate executa doar procese de la OS
+- doar un CPU sa faca I/O 
+
+#### 3. Non-uniform memory access (NUMA):
+- este o arhitectura in care timpul de acces la memorii varianza 
+- fiecare procesor are o zona a sa locala de memorie, iar accesarea sa de catre alt procesor necesita un timp mai indelungat
+
+![numa](images/numa.png)
 
 ## Referinte
 - https://www.os-book.com/OS9/slide-dir/index.html
