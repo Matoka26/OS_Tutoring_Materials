@@ -262,21 +262,21 @@ q = 4
 - Folosind <b><i>Exponential averaging/smoothing</b></i>, e o metoda de aproximare a seriilor de timp
 - Vom incepe de estimarea de la ultimul burst cunoscut
 - Notatii:
-$$
+$${
     t_n = lungimea \ \textbf{reala} \ a \ burstului \ n \\
     \tau _{n+1} = predictia \ urmatorului \ burst \\
     \alpha, 0 \leq \alpha \leq 1
-$$
+}$$
 - Definim:
-$$
+$${
     \tau_{n+1} = \alpha t_n + (1-\alpha)\tau_n
-$$
+}$$
 > [!NOTE]  
 > Formula estimeaza burst-ul viitor bazat pe burst-urile anterioare.  
 > <b>Constanta</b> alpha decide "cat conteaza experienta trecuta"  
 
-- Obersatii:
-$$
+- Obersatii:  
+$${  
 \begin{array}{rl}
     & \alpha = 0.6 \rightarrow \text{evenimentul curent conteaza in proportie de 60\%} \\
     & \rightarrow \text{evenimentele trecute conteaza\ (1 - 60)\%} \\
@@ -286,15 +286,15 @@ $$
     & \alpha = 1 \rightarrow \text{predictia se bazeaza doar pe evenimente trecute} \\
 
     & \alpha = 1/2 \text{ e o valoare comun aleasa} \\ 
-\end{array}
-$$
+\end{array}  
+}$$
 
 - Exemplu:  
 
 ![burst_prediction](images/burst_prediction.png)
 
 - Interpretare:
-$$
+$${
 \begin{array}{rl}
     0. & \tau_1 = 10, \text{ presupunem ca incepem cu un burst de } 10 \\
        & \alpha = 1/2 \text{, alegem coeficientul} \\
@@ -307,17 +307,17 @@ $$
     2. & t_2 = 4 \text{, primim burst 4} \\
        & \tau_3 = \alpha t_1 + (1-\alpha)\tau_1 \text{, inlocuim cunoscutele}\\
        & \tau_3 = \frac{1}{2} * 4 + (1-\frac{1}{2})*8 \\
-       & \tau_3 = 6 \text{, avem urmatoarea predictie}\\
-    ...
+       & \tau_3 = 6 \text{, avem urmatoarea predictie} \\
+    ...  
 \end{array}
-$$
+}$$
 
 - Termen general:
-$$
+$${
 \tau_{n+1} = \alpha t_n + (1 - \alpha) \tau_{n-1} + \ldots + (1 - \alpha)^j \tau_{n-j} + \ldots + (1 - \alpha)^{n+1} \tau_0 \\
 
-\equiv \tau_{n+1} = \alpha t_n + \sum_{j=0}^{n} (1 - \alpha)^j \tau_{n-j}
-$$
+\equiv \tau_{n+1} = \alpha t_n + \sum_{j=0}^{n} (1 - \alpha)^j \tau_{n-j}  
+}$$  
 Observam ca (1-alpha) ste subunitar, iar la fiecare pas e ridicat la un exponent mai mare, scazand impactul predictiilor trecute pentru suma.
 
 
@@ -398,7 +398,7 @@ Exemple:
 ## 12. Little's Law:
 Numarul mediu pe termen lung de procese din coada e egal cu produsul dintre timpul mediu de sosire si timpul mediu de asteptare
 
-$$
+$${
 \begin{array}{rl}
     & n = \text{lungimea medie a cozii} \\
     & W = \text{timpul mediu de asteptare in coada} \\
@@ -406,7 +406,7 @@ $$
     \\
     & n = \lambda * W \\
 \end{array}
-$$
+}$$
 
 Exemplu:  
 - avem in medie 7 procese pe secunda
