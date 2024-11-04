@@ -1,8 +1,8 @@
 # Task Scheduling
 ## 1. Motivatie
 - <b>Max CPU utilization:</b> Sa folosim la maxim CPU
-- <b>Max throughput:</b> Sa complemtam cat mai multe task-uri intr-un interval de timp
-- <b>Min turnaround time:</b> Sa minimizam timpul in care un task e dat jos de pe CPU
+- <b>Max throughput:</b> Sa completam cat mai multe task-uri intr-un interval de timp
+- <b>Min turnaround time:</b> Sa minimizam timpul in care un task e dat jos de pe CPU si pana e pus inapoi pe CPU
 - <b>Min waiting time:</b> Sa minimizam timpul in care un task asteapta in ready queue
 - <b>Min response time:</b> Sa minimizam timpul de cand a fost trimis un task pana cand a inceput sa ruleze pentru prima data
 
