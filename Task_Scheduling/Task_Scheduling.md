@@ -253,6 +253,10 @@ q = 4
 
 ![context_sw](images/context_sw.png)
 
+### 6.4 Proportional Share Scheduling
+- <i>T</i> <b><i>share-uri</b></i> sunt alocate tuturor proceselor
+- O aplicatie primeste <i>N</i> share-uri unde <i>N<T</i>
+- Asigura ca fiecare proces primeste <i>N/T</i> din CPU time
 
 ## 7. Cum determinam lungimea urmatorului Burst?
 - Folosind <b><i>Exponential averaging/smoothing</b></i>, e o metoda de aproximare a seriilor de timp
@@ -378,7 +382,37 @@ Exemple:
 
 ![numa](images/numa.png)
 
-## Referinte
+## 11. Load Balancing:
+- O problema care apare in cazul arhitecturilor simetrice
+- Am vrea ca <b><i>work load-ul</b></i> sa fie distribuit cat mai uniform pe toate procesoarele
+- Daca avem o coada comuna fiecare procesor isi va lua un task nou cand termina job-ul trecut si scapam de problema 
+
+![load_balance](images/load_balance.png)
+
+- <b>Hard real-time systems</b>: In realitate job-urile pot adea un <b><i>deadline</b></i> pana la care sa fie executat ceea ce adauga mai multa complexitate problemei <b><i>(Earliest Deadline First Scheduling)</b></i>
+
+#### Abordari:
+- <b>Push Migration</b>: Avem un task care periodic verifica balance-urile procesoarelor si daca gaseste imbalansari incearca sa le rezolve
+- <b>Pull Migration</b>: Cand un procesor isi termina work load-ul isi trage un task nou din coada 
+
+## 12. Little's Law:
+Numarul mediu pe termen lung de procese din coada e egal cu produsul dintre timpul mediu de sosire si timpul mediu de asteptare
+
+$$
+\begin{array}{rl}
+    & n = \text{lungimea medie a cozii} \\
+    & W = \text{timpul mediu de asteptare in coada} \\
+    & \lambda = \text{timpul mediu de sosire in coada} \\
+    \\
+    & n = \lambda * W \\
+\end{array}
+$$
+
+Exemplu:  
+- avem in medie 7 procese pe secunda
+- avem in medie 14 procese in coada
+- atunci conform legii timpul mediu de asteptare este de 2 unitati de timp
+## 13. Referinte:
 - https://www.os-book.com/OS9/slide-dir/index.html
 - https://www.baeldung.com/cs/cpu-io-burst-cycles
 - https://www.geeksforgeeks.org/preemptive-and-non-preemptive-scheduling/
