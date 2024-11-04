@@ -313,11 +313,12 @@ $${
 }$$
 
 - Termen general:
-$${
-\tau_{n+1} = \alpha t_n + (1 - \alpha) \tau_{n-1} + \ldots + (1 - \alpha)^j \tau_{n-j} + \ldots + (1 - \alpha)^{n+1} \tau_0 \\
-
+$$
+\tau_{n+1} = \alpha t_n + (1 - \alpha) \tau_{n-1} + \ldots + (1 - \alpha)^j \tau_{n-j} + \ldots + (1 - \alpha)^{n+1} \tau_0
+$$
+$$
 \equiv \tau_{n+1} = \alpha t_n + \sum_{j=0}^{n} (1 - \alpha)^j \tau_{n-j}  
-}$$  
+$$  
 Observam ca (1-alpha) ste subunitar, iar la fiecare pas e ridicat la un exponent mai mare, scazand impactul predictiilor trecute pentru suma.
 
 
