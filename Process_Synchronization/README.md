@@ -165,6 +165,7 @@ Ce a schimbat acel ```memory_barrier()```?
 - Printre cele mai importante variante se numara:
 1. Hardware Instructions
 2. Variabile atomice
+3. Mutex
 
 ### Hardware Instructions
 - Instructiuni speciale hardware care ne lasa fie sa testam-si-modificam continutul unui cuvant sau sa schimbam in mod atomic continutul a 2 cuvinte (e.g in mod neintrerupt)
@@ -219,8 +220,178 @@ int compare_and_swap(int *value, int expected, int new_value) {
 - Seteaza variabila ```value``` la **new_value**, dar doar daca ```*value == expected```. Asta inseamna ca schimbarea valorii se intampla doar in conditiile acestea
 ```
 
+#### Solution using compare_and_swap()
+- Avem variabila ```lock``` partajata, initializata cu **false**
+- Solutia:
+```
+while (true) {
+    while (compare_and_swap(&lock, 0, 1) != 0)
+        ; /* do nothing */
+
+        /* critical section */
+
+        lock = 0;
+
+        /* remainder section */
+}
+```
+
+#### Bounded-waiting with compare-and-swap
+```
+while (true) {
+   waiting[i] = true;
+   key = 1;
+   while (waiting[i] && key == 1) 
+      key = compare_and_swap(&lock,0,1); 
+   waiting[i] = false; 
+   /* critical section */ 
+   j = (i + 1) % n; 
+   while ((j != i) && !waiting[j]) 
+      j = (j + 1) % n; 
+   if (j == i) 
+      lock = 0; 
+   else 
+      waiting[j] = false; 
+   /* remainder section */ 
+}
+```
+
+### Variabile atomice
+- De obicei, instructiuni precum compare_and_swap sunt folosite ca blocuri de baza pentru alte tool-uri de sincronizare
+- Unul dintre acele tool-uri sunt chiar variabilele atomice care ofera actualizari atomice pe structuri de date de baza precum integers si booleans
+- De exemplu:
+    - Fie ```sequence``` o variabila atomica
+    - Fie ```increment()``` o operatie pe variabila atomica
+    - Comanda ```increment(&sequence)``` se asigura ca **sequence** este incrementat fara intreruperi
+
+```
+void increment(atomic_int *v)
+{
+	int temp;
+	do {
+		temp = *v;
+	}
+	while (temp != (compare_and_swap(v,temp,temp+1)));
+} 
+```
+
 ### Mutex Locks
+- solutiile de pana acum au fost complicate si general inaccesibile pentru programatori
+- designerii sistemelor de operare au creat tool-uri software pentru a rezolva problema sectiunii critice
+- cea mai simpla solutie este **mutex lock** (o variabila booleana care indica daca lock-ul este valabil sau nu)
+- protejezi zona critica prin
+    - prima oara apelezi ```acquire()``` pentru a lua lock-ul
+    - dupa apelezi ```release()``` pentru a il da inapoi
+- apelurile la ```acquire()``` si ```release()``` trebuie sa fie atomice
+
+Codul arata astfel:
+```
+while (true) { 
+	acquire lock 
+			
+	   critical section 
+
+	release lock 
+	
+remainder section 
+}
+```
 
 ### Semaphores
 
+- Tool de sincronizare mai complex decat mutex locks pentru ca procesele sa-si sincronizeze activitatile
+- Semafor S - variabila intreaga
+- poate fi accesat doar prin doua operatii atomice:
+    - ```wait()``` si ```signal()```
+- Definita pentru **wait**:
+```
+wait(S) {
+    while (S <= 0)
+        ; // busy wait
+    S--;
+}
+```
+- Definitia pentru **signal**:
+```
+signal(S) {
+    S++;
+}
+```
+
+#### Exemplu de utilizare semafoare
+- Presupunem ca avem doua procese P1 si P2 care vor sa faca doua lucruri (S1 si S2). Cerinta este ca vrem S1 sa se intample inaintea lui S2. Rezolvare:
+    - Cream un semafor "synch" initializat cu 0
+    - P1:
+    ```
+    S1;
+    signal(synch);
+    ```
+    - P2:
+    ```
+    wait(synch);
+    S2;
+    ```
+
+### Semaphores with no busy waiting
+- Implementarea de mai devreme includea busy waiting
+- Pentru a implementa semafoare fara busy waiting, mai adaugam un nivel de complexitate: o coada de asteptare
+- Fiecare intrare in coada de asteptare are 2 iteme:
+    - Valoare (intreaga)
+    - Pointer la urmatoarea intrare in coada
+- 2 operatii:
+    - **block** => plaseaza procesul care invoca operatia in coada de asteptare
+    - **wakeup** => elimina unul dintre procese din coada de asteptare si le include in ready queue
+
+Implementare:
+```
+ typedef struct { 
+   	int value; 
+   	struct process *list; 
+} semaphore; 
+
+wait(semaphore *S) { 
+   S->value--; 
+   if (S->value < 0) {
+      add this process to S->list; 
+      block(); 
+   } 
+}
+
+signal(semaphore *S) { 
+   S->value++; 
+   if (S->value <= 0) {
+      remove a process P from S->list; 
+      wakeup(P); 
+   } 
+} 
+```
+
 ### Monitors
+
+- un nivel inalt de abstractizare care ofera un mecanism bun de sincronizare a proceselor
+- abstract data type, variabilele interne pot fi accesate doar de codul din interiorul procedurilor
+- doar un proces poate fi activ la un moment dat in monitor
+- sintaxa pseudocod a unui monitor:
+```
+monitor monitor-name
+{
+	// shared variable declarations
+	procedure P1 (…) { …. }
+
+	procedure P2 (…) { …. }
+
+	procedure Pn (…) {……}
+
+  initialization code (…) { … }
+}
+```
+
+## Liveness
+
+- Procesele pot avea de asteptat pentru un timp nedeterminat cand asteapta sa obtina lock-ul unui mutex sau semafor
+- Aceasta problema nu respecta regula **progresului** si a **asteptarii limitate** (progress and bounded-waiting)
+- **Liveness** se refera la un set de proprietati pe care un sistem trebuie sa le satisfaca sa se asigura ca procesele fac progres
+1. Deadlock => cand 2 procese raman intr-o bucla infinita fiecare asteptand sa faca celalalt o mutare
+2. Starvation => cand un proces nu mai ajunge niciodata sa ia lock-ul
+3. Inversarea de prioritati => problema de planificare a proceselor, cand un proces cu prioritate mai mica are lock-ul de care are nevoie un proces cu prioritate mai mare (se rezolva cu priority-inheritance protocol)
+
