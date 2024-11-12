@@ -413,7 +413,14 @@ Exemplu:
 - avem in medie 7 procese pe secunda
 - avem in medie 14 procese in coada
 - atunci conform legii timpul mediu de asteptare este de 2 unitati de timp
-## 13. Referinte:
+
+## 13. Alti Algoritmi Interesanti:
+- Rotating Staircase Deadline Scheduler (RSDL)
+- O(1) Scheduling
+- Completely Fair Scheduler (CFR)
+- Brain F*ck Scheduler (BFS)
+
+## 14. Referinte:
 - https://www.os-book.com/OS9/slide-dir/index.html
 - https://www.baeldung.com/cs/cpu-io-burst-cycles
 - https://www.geeksforgeeks.org/preemptive-and-non-preemptive-scheduling/
