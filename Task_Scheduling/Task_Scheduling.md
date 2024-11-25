@@ -426,3 +426,21 @@ Exemplu:
 - https://www.geeksforgeeks.org/preemptive-and-non-preemptive-scheduling/
 - https://www.geeksforgeeks.org/difference-between-dispatcher-and-scheduler/
 - https://en.wikipedia.org/wiki/Exponential_smoothing
+
+## 15. Exercitii examen
+
+1. Fie urmatoarea secventa de procese in lista de asteptare, unde CPU este timpul total de executie necesar procesului si **Start** momentul la care procesul a sosit in coada de asteptare
+
+|Proces|Start|CPU|
+|---|---|---|
+|P0|1|4|
+|P1|0|3|
+|P2|3|5|
+|P3|2|8|
+|P4|3|1|
+|P5|2|7|
+|P6|4|5|
+
+**(a)**  Cum arata diagrama Gantt rezultata in urma aplicarii unui algoritm de tip Round Robin cu cuanta initiala q<sub>0</sub> = 3 in care quanta se dubleaza per proces daca procesul este evacuat in urma epuizarii timpului alocat?
+**(b)** Dar in urma aplicarii SJF? Algoritmul este preemptive
+**(c)** Care este timpul mediu de asteptare la punctele anterioare?
