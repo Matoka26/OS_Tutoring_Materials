@@ -442,7 +442,9 @@ Exemplu:
 |P6|4|5|
 
 **(a)**  Cum arata diagrama Gantt rezultata in urma aplicarii unui algoritm de tip Round Robin cu cuanta initiala q<sub>0</sub> = 3 in care quanta se dubleaza per proces daca procesul este evacuat in urma epuizarii timpului alocat?
+
 **(b)** Dar in urma aplicarii SJF? Algoritmul este preemptive
+
 **(c)** Care este timpul mediu de asteptare la punctele anterioare?
 
 2.
