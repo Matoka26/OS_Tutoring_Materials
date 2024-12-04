@@ -124,6 +124,7 @@
 
 ## 8. Swapping
 - Un proces poate fi **scos** din memoria principala si adus mai tarziu inapoi pentru a continua executia
+- Se poate intampla cand memoria principala libera este foarte mica
 - ***Backing store*** 
     - disk rapid suficient de mare pentru a tine mai multe copii de procese pentru toti userii
     - trebuie sa ofere acces direct catre imagini
@@ -133,3 +134,89 @@
 - Mare parte din swap este ocupata de ***transferul datelor***, care e proportional cu dimensiunea memoriei care trebuie mutata (se face hardware deci timpul fizic de transfer al unui block e acelasi pentru toata lumea)
 
 - Sistemul mai tine si o coada pentru procesele ready-to-run de pe disk
+
+- Procesul trebuie realocat la aceeasi adresa fizica?
+
+- OS-urile moderne folosesc variatii ale swap-ului clasic
+
+![swapping](assets/swapping.png)
+
+## 9. Context Switch
+
+- Daca procesul pe care il vrem nu se afla in memorie, trebuie adus din backing store -> ***context switch*** foarte lung
+
+- **Nu putem** da swap switch **cand asteptam I/O** 
+    - procesul nu va fi pus inapoi la aceeasi adresa, iar datele vor ajunge la adresa gresita
+    - daca am incerca ***double buffering*** (sa transmitem in kernel space apoi la I/O device) adauga doar mai mult ***overhead***
+- Pe **mobile**:
+    - spatiul este mic
+    - randamentul intre ***flash memory*** si **CPU** este foarte slab
+    - **iOS** -> cere aplicatiilor sa dezaloce voluntar resurse
+    - **Android** -> incheie direct procesul, dar ii salveaza state-ul in flash pentru a-l reporni mai repede
+
+## 10. Alocare contingua
+- O prima idee ar fi sa alocam procesele unul dupa altul
+- Sistemul de operare la adrese mici
+- Procesele user-ului la adrese mari
+- Fiecare proces ocupa un block continuu
+![alocare_Contigua](assets/alocare_contigua.png)
+- Ce se intampla daca **P2** se termina inainte de **P3**?
+
+> [!NOTE]
+> **Continuu vs Contiguu**  
+> - ***Contiguu***: Pentru lucruri fizice care se ating/sunt conectate
+>   - exemplu: Tarile dintr-un continent sunt dispuse **contiguu**
+> - ***Continuu***: Ceva care continua fara intrerupere
+>   - exemplu: O linie fara intreruperi e **continua**
+
+## 11. Alocare Multi-paritition
+- ***Partitie*** -> Slot de memorie variabil ca marime
+- ***Gaura*** -> block de memorie nealocata
+- Cand un proces apare, ii cautam o gaura suficient de mare unde sa il alocam
+- Nivelul de multiprogramare pe care il putem avea depinde de numarul maxim de partitii
+- OS-ul trebuie sa tina minte informatii despre ***partitiile alocate*** si ***partitiile libere***
+
+![partitii](assets/partitii.png)
+
+- Cum alegem gaura buna? ( ͡° ͜ʖ ͡°)
+    - ***First-Fit*** -> prima gaura suficient de mare (ca in poza de mai sus)
+    - ***Best-Fit*** -> cea mai mica gaura suficient de mare  
+        -> lasa cele mai mici resturi posibile :)  
+        -> trebuie cautata intreaga lista :(  
+    - ***Worst-Fit*** -> cea mai mare gaura  
+        -> trebuie cautata intreaga lista :(
+
+## 12. Fragmentare
+- ***Fragmentare Externa*** : Avem gauri intre partitii, adica nu avem alocare contigua
+    - **Solutie** Compactam spatiile goale, luam mai multe block-uri cu gauri intre ele si le aducem unul langa altul.
+        - Nu putem face **I/O** cat le mutam, trebuie buffer-uit uneva
+        - Functioneaza doar pentru **relocari dinamice** si se face la **run-time**
+
+- ***Fragmentare Interna*** : Partitiile pe care le alocam sunt putin mai mari decat spatiul alocat procesului
+
+## 13. Segmentare
+- Schema de management al memoriei
+- Ca user ai un view mai bun al memoriei
+- Considera ca un program este ***o colectie de segmente***
+- Un segment este ***o unitate logica*** precum: functii, metode, programu main, obiecte, tabelu de simboluri, etc
+
+![segmentare](assets/segmentare.png)
+
+## 14. Arhitectura Segmentarii
+- O **adresa logica** e formata dintr-un tuplu ***<segment-number, offset>*** 
+- ***Segment-table*** 
+    - mapeaza **adrese fizice** 2D
+    - o intrare contine ca date **base, limit**
+    - o intrare mai are si **1bit de validare** (0 -> illegal segment) si **privilegiile** read/write/execute (Cati biti sunt necesari sa reprezentam informatia asta?)
+- ***Segment-table base register (STBR)*** : Pointer catre tabelul de segmente al unui program
+- ***Segment-table length register (STLR)*** : Numarul de segmente al unui program
+
+![segmentation_hardware](assets/segmentation_hardware.png)
+
+In diagrama de mai sus:
+1. ***CPU*** genereaza o ***adresa logica(Segment_number, Displacement/offset) -> s|d***
+2. Cauta in ***segment table*** intrarea corespunzatoare lui ***s***
+3. Verifica daca ***offset-ul d*** depaseste ***limita***
+4. Daca nu depaseste, ii adaugam ***base-ul*** si am aflat ***adresa fizica***. Altfel ***eroare***
+
+## 15. Paginare
