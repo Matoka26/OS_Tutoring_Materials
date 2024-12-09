@@ -220,3 +220,116 @@ In diagrama de mai sus:
 4. Daca nu depaseste, ii adaugam ***base-ul*** si am aflat ***adresa fizica***. Altfel ***eroare***
 
 ## 15. Paginare
+**Spatiul de adresele fizice** ale unui proces poate sa nu fie contiguu
+Am vrea sa evitam: 
+- ***fragmentarea externa*** 
+- ***chunk-urile de memorie*** de marime ***variabila***
+
+ 
+> [!TIP]  
+> Impartim ***adresele fizice*** in blocuri de dimensiuni fixe numite ***frame-uri***
+> De obicei puteri ale lui 2 (4KiB), dar poate fi modificat.
+
+> [!TIP]  
+> Impartim ***adresele logice*** in blocuri de **acelasi size cu cele fizice**  numite ***page-uri***
+
+- Vom avea nevoie de un ***page table*** unde sa traducem adresele logice in adrese fizice
+- Vom imparti si **back store-ul** la fel
+
+> [!WARNING]  
+> Inca va exista ***fragmentare interna***
+
+```c
+/* Snip de cod pentru a vedea PAGE_ZISE-ul pe UNIX/POSIX */
+
+#include <stdio.h>
+#include <unistd.h> /* sysconf(3) */
+
+int main(void)
+{
+	printf("The page size for this system is %ld bytes.\n",
+		sysconf(_SC_PAGESIZE)); /* _SC_PAGE_SIZE is OK too. */
+
+	return 0;
+}
+```
+
+```c
+/* Snip de cod pentru a vedea PAGE_ZISE-ul pe Windows */
+
+#include <stdio.h>
+#include <windows.h>
+
+int main(void)
+{
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+
+	printf("The page size for this system is %u bytes.\n", si.dwPageSize);
+
+	return 0;
+}
+```
+
+## 16. Cum traducem Page-urile in adrese?
+Adresele generate de CPU se impart in:
+- ***page number (p)***
+    - e ca un **index** intr-un **page table** care contine inceputul fiecarui **page** in **memoria fizica**
+- ***page offset (d)***
+    - ***d*** de la ***displacement***
+    - adunat la ***p*** pentru a aflat **adresa fizica** trimisa la ***MMU***
+
+![page_str](assets/page_str.png)
+- Pentru imaginea de sus:
+    - cate adrese avem?
+    - cate page-uri avem?
+    - cate adrese avem pe un page?
+
+Exemplu generic:  
+![page_table](assets/page_table.png)
+
+Exemplu unde: **n=2, m=4 32-byte memory, 4-byte pages**
+- n=2 -> avem maxim 2^2 page-uri
+- m=4 -> avem maxim 4 adrese pe 1page 
+- memoria e de 32bytes deci am avea loc de 8 page-uri, dar nu ne permite tabela sa avem mai mult de 4 
+![alt_page_table](assets/alt_page_table.png)
+
+Imagine de ansamblu: 
+![paging](assets/paging.png)
+1. Observam ca:
+- **adresele logice** sunt pe **13bits**, ***3p si 10d***
+- **adresele fizice** sunt pe **12bits**, ***2f si 10d***
+- ambele au ***PAGE_SIZE=10***
+
+2. CPU 'scuipa' **adresa logica** 111.0000001010 -> 3.10
+- avem **offest-ul d=10**
+- cautam in **page table** pagina **p=3** si gasim corespondenta cu frame-ul **f=2**
+
+3. Avem totul pentru a determina **adresa fizica**:
+- adunam la **f** pe **d**
+- done.
+
+## 17. Cum determinam de cate Page-uri avem nevoie?
+Exemplu:
+- **PAGE_SIZE**=2,048 bytes
+- **PROCESS_SIZE**=72,766 bytes
+- **PRCOESS_SIZE** / **PAGE_SIZE** => 35 page-uri + 1,086 bytes => 36 page-uri
+- formula ar fi ***ceil(PRCOESS_SIZE / PAGE_SIZE)***
+- Cat e fragmentarea interna?
+    - pai in urma impartirii ne-au ramas 1,086 bytes
+    - 1page = 2,048 byes
+    - 2048 - 1086 = 962 bytes **nefolositi**
+    - Worst case? Best case?
+
+## 18.Cum alegem page-urile?
+- Vedem cate page-uri ocupa procesul
+- Alegem primele page-uri libere din tabela de ***free pages***  
+- Completam tabela
+![free_page](assets/free_page.png)
+
+
+
+## 19. Implementarea Page Tabel-ului
+
+## Referinte:
+- https://www.geeksforgeeks.org/paging-in-operating-system/
