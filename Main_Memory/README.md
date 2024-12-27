@@ -1,4 +1,4 @@
-# Task Scheduling
+# Main Memory
 ## 1. Motivatie
 - Programele trebuie aduse de pe ***disk*** in memorie si pornit un proces pentru a executa
 - Vrem sa executam operatiile corect pentru a **proteja** memoria
@@ -7,7 +7,7 @@
 1. Registri
 - se afla **in CPU**
 - au cel mai rapid acces, **sub 1CC**
-- sunt **mici**, doar cativa bytes
+- sunt **mici**, doar cativa byte
 
 2. Cache
 - se afla *aproape de CPU*
@@ -61,7 +61,7 @@
 
 - Primim o adresa de memorie si vrem sa verificam daca se afla in bound-ul procesului nostru.
 - Daca nu se afla in bound, 'atingem' alt proces sau o zona reziduala -> ***segmentation fault***
-- un program malitios ar putea incerca sa iasa din bound-ul procesului, sau un program scris prost :)
+- Un program malitios ar putea incerca sa iasa din bound-ul procesului, sau un program scris prost :)
 - Orice proces ce incearca sa iasa din address space-ul lui vi fi **omorat** de OS.
 - Check-ul este realizat la fiecare accesare de memorie si este **implementat hardware**
 
@@ -92,7 +92,7 @@
     - referite ca ***adrese virtuale***
     - "fake"
 - Adrese fizice:
-    - ***adrese reale*** de din hardware
+    - ***adrese reale*** din hardware
     - asa cum sunt vazute de Memory-Management Unit (MMU)
 
 - Sunt aceleasi intre ***compile-time*** si ***load-time***
@@ -129,7 +129,7 @@
     - disk rapid suficient de mare pentru a tine mai multe copii de procese pentru toti userii
     - trebuie sa ofere acces direct catre imagini
 - ***Roll out, roll in***
-    - varianta de swapping pentru algorimtii de schedulebazati pe prioritati
+    - varianta de swapping pentru algorimtii de schedule bazati pe prioritati
 
 - Mare parte din swap este ocupata de ***transferul datelor***, care e proportional cu dimensiunea memoriei care trebuie mutata (se face hardware deci timpul fizic de transfer al unui block e acelasi pentru toata lumea)
 
@@ -324,12 +324,84 @@ Exemplu:
 ## 18.Cum alegem page-urile?
 - Vedem cate page-uri ocupa procesul
 - Alegem primele page-uri libere din tabela de ***free pages***  
-- Completam tabela
+- Completam tabela  
+
 ![free_page](assets/free_page.png)
 
-
-
 ## 19. Implementarea Page Tabel-ului
+- V-a fi tinuta de OS pe RAM? Ne incurca faptul ca RAM-ul e volatil?
+- ***Page-table base register (PTBR)*** -> indica **inceputul** tabelei
+- ***Page-table length register (PTLR)*** -> indica **size-ul** tabelei
+- Prin organizarea asta, fiecare acces de memorie necesita de fapt **2 accese**:
+    - 1 pentru a accesa tabela
+    - 1 pentru a accesa data efectiva  
+Poate fi rezolvata folosind [***translation look-aside buffers (TLBs)***](https://www.geeksforgeeks.org/translation-lookaside-buffer-tlb-in-paging/) (un cache) sau [***memorie asociativa***](https://www.geeksforgeeks.org/associative-memory/)
+
+- Page table-ul poate ocupa mult spatiu, deci va trebui sa gasim smecherii mai bune:
+    - Hierarchical Paging
+    - Hashed Page Tables
+    - Inverted Page Tables
+## 20. Effective Access Time (EAT)
+- Timpul mediu necesar pentru a accesa o locatie de memorie, considerand **cache hit-uri** si **cache miss-uri** 
+```
+Effective Access Time = Hit rate * Cache access time
+                      + Miss rate * Lower level access time
+```
+- 'Lower level access time' pentru ca la cache-uri putem avea mai multe nivele (ca la ASC)
+
+## 21. Protectia Memoriei
+- Putem adauga frame-urilor biti de permisiuni **read-only**, **read-write**, **execute-only**, etc.
+- Putem avea un bit **valid-invalid** care indica daca page-ul **apartine spatiului de adrese logice** ale procesului 
+    - sau folosim **PTLR** (registrul cu lungimea page-ului)
+![valid_bit](assets/valid_bit.png)
+
+## 22. Shared Pages
+- Mai multe procese pot imparti o **copie** ***read-only*** a unui page
+- Seamana cu resursele comune la multi-threading
+- E util daca facem IPC si avem voie sa impartim page-uri
+- Fiecare proces tine o copie separata a code-ului si datelor
+
+## 23. Hierarchical Page Tables
+- Spargem **spatiul de adrese logice** in mai multe **page table-uri**
+- O abordare simpla ar fi un page table pe 2 layere
+
+![2layer_page_table](assets/2layer_page_table.png)
+
+Exemplu:  
+Avem o arhitectura pe **32biti** si page_size de **1K**
+- **page offset** va fi de **10biti** (page_sizeu e de 1K)
+- ne raman **22biti** pentru page_number
+Dar page table-ul este si el paginat, deci vom face aceeasi diviziune iar:
+- **page offset** de **10biti**
+- **page number** de **12biti**
+![adr_logica_2layer](assets/adr_logica_2layer.png)  
+, unde p1, p2 sunt indecsii din page table-uri si d displacement-ul din a2a tabela
+- se numeste si ***forward-mapped page table***
+
+![adr_displacement](assets/adr_displacement.png)
+
+## 24. Hashed Page Tables
+- Avem un numar de page ***virtual*** care e **hash-uit** in page table
+- Daca avem coliziuni vom tine o lista cu intrarile
+- Fiecare intrare contine:
+    - virtual page number-ul
+    - frame-ul fizic corespunzator
+    - pointer catre urmatorul element din lista
+- In liste cautam page-ul dorit
+
+### Clustered Page Tables
+- In loc sa mapam o pagina pe rand, intr-un entry tinem mai multe pagini
+- Util pentru spatii de adrese cu referinte de memorie rare sau non-contigue
+
+![hashed_pages](assets/hashed_pages.png)
+
+### 25. Inverted Page Table
+- In loc ca fiecare proces sa aibe o tablea a lui, exista **o singura tabela**
+- O intrare corespunde **unui frame** si mai tine **date despre procesul care detine pagina**
+- Scade spatiul necesar, dar creste timpul de cautare
+
 
 ## Referinte:
 - https://www.geeksforgeeks.org/paging-in-operating-system/
+- https://www.geeksforgeeks.org/multilevel-cache-organisation/
+- https://www.geeksforgeeks.org/memory-hierarchy-design-and-its-characteristics/
