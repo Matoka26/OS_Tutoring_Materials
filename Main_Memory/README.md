@@ -389,11 +389,13 @@ Dar page table-ul este si el paginat, deci vom face aceeasi diviziune iar:
     - pointer catre urmatorul element din lista
 - In liste cautam page-ul dorit
 
+
+![hashed_pages](assets/hashed_pages.png)
+
 ### Clustered Page Tables
 - In loc sa mapam o pagina pe rand, intr-un entry tinem mai multe pagini
 - Util pentru spatii de adrese cu referinte de memorie rare sau non-contigue
 
-![hashed_pages](assets/hashed_pages.png)
 
 ### 25. Inverted Page Table
 - In loc ca fiecare proces sa aibe o tablea a lui, exista **o singura tabela**
